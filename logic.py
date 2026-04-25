@@ -3,15 +3,14 @@ import sqlite3
 conn = sqlite3.connect("db.sqlite")
 cursor = conn.cursor()
 
-
 #tabel1 Pesawat
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS aircraft (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    manufacturer TEXT,
+    code TEXT,
     type TEXT,
+    manufacturer TEXT,
     description TEXT
 );
 """)
@@ -63,14 +62,14 @@ def get_connection():
 def add_qa(question, answer, category):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""INSERT INTO qa(question,answer,category) VALUE (?,?,?)""",(question,answer,category))
+    cursor.execute("""INSERT INTO qa(question,answer,category) VALUES (?,?,?)""",(question,answer,category))
     conn.commit()
     conn.close()
     pass
 def get_question(question):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT question FROM qa WHERE LOWER(question) LIKE ?",
+    cursor.execute("SELECT answer FROM qa WHERE LOWER(question) LIKE ?",
         (f"%{question.lower()}%",)
     )
     result = cursor.fetchone()
