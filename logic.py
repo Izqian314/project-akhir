@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3,random
 
 conn = sqlite3.connect("db.sqlite")
 cursor = conn.cursor()
@@ -99,3 +99,36 @@ def get_quiz():
     conn.close()
     return quiz_list
     pass
+
+def get_quiz_by_id(quiz_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM quiz WHERE id=?", (quiz_id,))
+    result = cursor.fetchone()
+    conn.close()
+    return result
+    pass
+
+def check_quiz_answer(quiz_id, user_answer):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT correct_answer FROM quiz WHERE id = ?",(quiz_id,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if result:
+        correct_answer = result[0].lower().strip()
+        user_answer = user_answer.lower().strip()
+        return correct_answer == user_answer
+    return False
+    pass
+
+def add_quiz_score(username, score):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+                   INSERT INTO quiz_score (username, score)
+                   VALUES (?, ?)
+                   """, (username, score))
+    conn.commit()
+    conn.close()
